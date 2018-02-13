@@ -1,0 +1,41 @@
+<div class="license-block"  id="team-license-upgrade" >
+ 
+		<?php 
+			$i = 1;
+			$available_licenses = License::getAvailableLicenseTypes(S::S()->isMultiUserSubscription());
+			foreach ($available_licenses as $l) {
+				$licType = $l['sName']
+				?>
+					<div class="license-type">
+						<div class="license-data-container text-left">
+							<div class="license-title"><?php echo $licType . " " . $this->translate("Licenses");?></div>
+							<span class="license-active">
+								<?php echo $this->Lic['seatsUsed'][$licType]['Allocated'] ? $this->Lic['seatsUsed'][$licType]['Allocated'] : 0 ; ?>
+								<span class="small"><?php echo $this->translate("Active");?></span>
+							</span>
+							<span class="license-purchased">
+							<?php echo $this->Lic['seatsPurchased'][$licType] ? $this->Lic['seatsPurchased'][$licType] : 0 ; ?>
+								<span class="small"><?php echo $this->translate("Purchased");?></span>
+							</span>
+						</div>
+					</div>
+				<?php
+				if ($i === 4 && S::S()->isMultiUserSubscription()) {
+					?>
+					<hr style="width: 95%; margin: 16px auto 0 auto;">
+					<style>
+						.license-block .license-type:last-child {
+							border-right: 1px solid #DDDDDD;
+						}
+					</style>
+					<?php
+				}
+				$i++;
+			}
+		?>
+</div>
+<div class="text-right upgrade-license-button">
+		<span class="upgrade-label"><?php echo $this->translate("Growing your team and need additional licenses?"); ?></span>
+		<?php echo $this->UpgradeLicenseButton($this->Translate("Add Licenses")); ?>
+</div>
+

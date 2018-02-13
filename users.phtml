@@ -1,0 +1,89 @@
+<?php
+// Old stuff starting here.
+$this->content_layout = "1column";
+
+$panes = array(
+	'pane5' => array('id' => "side-panel", 'classes' => array("has-header", "has-footer")),
+	'pane4' => array('id' => "teamrole-edit-pane", 'classes' => array("has-footer", "has-header")),
+	'pane3' => array('id' => "metadata-edit-pane", 'classes' => array("has-footer", "has-header", "has-no-nav")),
+	'pane2' => array('id' => "user-metadata-pane", 'classes' => array("has-footer", "has-header", "has-no-nav")),
+	'pane1' => array('id' => "user-edit-pane", 'classes' => array("has-footer", "has-header", "has-header-nav")),
+);
+
+$this->Panes($panes);
+
+$this->Modal("user-license-bulk-assign", array(1));
+$this->Modal("confirm-user-create", array(1));
+$this->Modal('userinvite-mapfields', array(1));
+$this->Modal("users-upload", array(1));
+if (S::S()->isDIYSubscription()) {
+	$this->Modal("diy-add-user-modal", array(1));
+}
+
+?>
+
+<? /* myUserID is used to check if self is selected in bulk disable */ ?>
+<input type="hidden" id="myUserID" value="<?=S::U()->id?>">
+
+<h1 class="page-title heading2"><?php echo $this->translate("User Management") ?></h1>
+<div class="content-block">
+	<?php
+	if (S::S()->isLicenseBasedSubscription() && ! S::S()->isDIYSubscription()) {
+    	?>
+    	<div class="row">
+	    	<div class="col-sm-12">
+				<h2 class="heading3"><?php echo $this->translate('Licenses'); ?></h2>
+			</div>
+		</div>
+		<div class="row">
+	    	<div class="col-sm-12">
+				<?php
+				include(APPLICATION_PATH."license-grid.phtml");
+				?>
+			</div>
+		</div>
+		<?php
+	}
+
+	$this->Controls_GridList('user');
+	?>
+</div>
+
+
+
+<script type="text/javascript">
+$(function(){
+	<?php if ($this->openLicenseModal == "open") {  ?>
+	$(".license-upgrade-btn").click();
+	<?php } ?>
+	<?php if ($this->openUserDataPane == "open") {  ?>
+	$("#edit_userdata_btn").click();
+	<?php } ?>
+	<?php if ($this->openInvitePane) {  ?>
+	$('[data-target="#user-edit-pane"]').click();
+	<?php }  ?>
+	if (window.history && window.history.pushState) {
+		window.history.pushState({}, 'Users', '/account/users');
+	}
+});
+</script>
+
+<?php $this->JS() ?>
+<script>
+$(function(){
+	var $userPane = $('#user-edit-pane'), $userRolePane = $('#teamrole-edit-pane')
+	$userPane.on('Panel.beforeshow', function(e, panel) {
+		$userRolePane.panel('hide')
+	}).on('Panel.hide', function(){
+		$userRolePane.panel('hide')
+	})
+});
+</script>
+<script>
+	$(function(){
+		new InviteUserList({
+			id : 'user-upload-form'
+		})
+	});
+</script>
+<?php $this->JS() ?>
